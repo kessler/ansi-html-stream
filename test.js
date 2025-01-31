@@ -1,6 +1,5 @@
 var assert = require('assert')
   , concat = require('concat-stream')
-  , clone = require('clone')
   , ansi = require('./')
 
 require('colors')
@@ -16,7 +15,7 @@ var colors = [
 
 function testClassAndInline(callback) {
   [true, false].forEach(function(classTest) {
-    suite(classTest ? 'Classes' : 'Inline', function() {
+    describe(classTest ? 'Classes' : 'Inline', function() {
       callback(classTest)
     })
   })
@@ -25,7 +24,7 @@ function testClassAndInline(callback) {
 function testAllColors(callback) {
   testClassAndInline(function(classTest) {
     colors.forEach(function(props) {
-      props = clone(props)
+      props = structuredClone(props)
       props.classes = classTest
       callback(props)
     })
@@ -43,7 +42,7 @@ function testColorGroups(n, m, callback) {
       , props
 
     function handle(c) {
-      c = clone(c)
+      c = structuredClone(c)
       c.classes = classTest
       return c
     };
@@ -61,10 +60,10 @@ function concatANSI(input, options, callback) {
   return stream
 };
 
-suite('ANSI Stream', function() {
-  suite('Single Chunks', function() {
+describe('ANSI Stream', function() {
+  describe('Single Chunks', function() {
     testAllColors(function(props) {
-      test(props.name[props.name], function(done) {
+      it(props.name[props.name], function(done) {
         concatANSI('hello'[props.name], {
             chunked: false
           , classes: props.classes
@@ -81,9 +80,9 @@ suite('ANSI Stream', function() {
     })
   })
 
-  suite('Mixed Plain and Coloured', function() {
+  describe('Mixed Plain and Coloured', function() {
     testAllColors(function(props) {
-      test(props.name[props.name], function(done) {
+      it(props.name[props.name], function(done) {
         concatANSI('lorem ' + 'ipsum'[props.name] + ' dolor', {
             chunked: false
           , classes: props.classes
@@ -100,8 +99,8 @@ suite('ANSI Stream', function() {
     })
   })
 
-  suite('Handles underline', function(done) {
-    test('Underline with no colour', function(done) {
+  describe('Handles underline', function(done) {
+    it('Underline with no colour', function(done) {
       concatANSI('not underlined, ' + 'underlined'.underline + ', not underlined', {
         chunked: false
       }, function(err, data) {
@@ -109,7 +108,7 @@ suite('ANSI Stream', function() {
       })
       done()
     })
-    test('Underline and colour', function(done) {
+    it('Underline and colour', function(done) {
       concatANSI('not underlined, ' + 'underlined & coloured'.red.underline + ', not underlined', {
         chunked: false
       }, function(err, data) {
@@ -119,7 +118,7 @@ suite('ANSI Stream', function() {
     })
   })
 
-  suite('Side-by-side colour changes', function() {
+  describe('Side-by-side colour changes', function() {
     testColorGroups(2, 2, function(col1, col2) {
       var string = [
           'lorem'
@@ -128,7 +127,7 @@ suite('ANSI Stream', function() {
         , 'sit'
       ].join(' ')
 
-      test(col1.name[col1.name] + ', ' + col2.name[col2.name], function() {
+      it(col1.name[col1.name] + ', ' + col2.name[col2.name], function() {
         concatANSI(string, {
           classes: col1.classes
         }, function(err, data) {
@@ -143,7 +142,7 @@ suite('ANSI Stream', function() {
     })
   })
 
-  suite('Overriding colours', function() {
+  describe('Overriding colours', function() {
     function testCombo(bg, cb) {
       return function() {
         testColorGroups(3, 2, function(col1, col2, col3) {
@@ -158,7 +157,7 @@ suite('ANSI Stream', function() {
 
           function colors(col) { return col.name[col.name] };
 
-          test([col1, col2, col3].map(colors).join(', '), function(done) {
+          it([col1, col2, col3].map(colors).join(', '), function(done) {
             concatANSI(string, {
               classes: col1.classes
             }, function(err, data) {
@@ -181,7 +180,7 @@ suite('ANSI Stream', function() {
         '<span style="' + (background ? 'background-color' : 'color' ) + ':' + col.hex + '">'
     };
 
-    suite('Foregrounds', testCombo([false, false, false], function(data, col1, col2, col3, done) {
+    describe('Foregrounds', testCombo([false, false, false], function(data, col1, col2, col3, done) {
       assert.equal(data, [
           span(col1, false) + 'hello</span>'
         , span(col2, false) + 'world\n</span>'
@@ -190,7 +189,7 @@ suite('ANSI Stream', function() {
       done()
     }))
 
-    suite('Backgrounds', testCombo([true, true, true], function(data, col1, col2, col3, done) {
+    describe('Backgrounds', testCombo([true, true, true], function(data, col1, col2, col3, done) {
       assert.equal(data, [
           span(col1, true) + 'hello</span>'
         , span(col2, true) + 'world\n</span>'
@@ -199,7 +198,7 @@ suite('ANSI Stream', function() {
       done()
     }))
 
-    suite('BG/FG/FB', testCombo([true, false, true], function(data, col1, col2, col3, done) {
+    describe('BG/FG/FB', testCombo([true, false, true], function(data, col1, col2, col3, done) {
       assert.equal(data, [
           span(col1, true) + 'hello'
         , span(col2, false) + 'world\n</span></span>'
@@ -208,7 +207,7 @@ suite('ANSI Stream', function() {
       done()
     }))
 
-    suite('BG/FG/FG', testCombo([true, false, false], function(data, col1, col2, col3, done) {
+    describe('BG/FG/FG', testCombo([true, false, false], function(data, col1, col2, col3, done) {
       assert.equal(data, [
           span(col1, true) + 'hello'
         , span(col2, false) + 'world\n</span>'
@@ -217,7 +216,7 @@ suite('ANSI Stream', function() {
       done()
     }))
 
-    suite('FG/FG/BG', testCombo([true, true, false], function(data, col1, col2, col3, done) {
+    describe('FG/FG/BG', testCombo([true, true, false], function(data, col1, col2, col3, done) {
       assert.equal(data, [
           span(col1, true) + 'hello</span>'
         , span(col2, true) + 'world\n'

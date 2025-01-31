@@ -1,7 +1,6 @@
 var escape = require('escape-html')
   , special = require('special-html')
   , map = require('map-stream')
-  , clone = require('clone')
   , extend = require('xtend')
 
 /**
@@ -22,7 +21,7 @@ function createStream(options) {
     , groups
     , stream
 
-  colors = clone(colors[options.classes ? 'classes' : 'inline'])
+  colors = structuredClone(colors[options.classes ? 'classes' : 'inline'])
   colors = extend(colors, options.theme || {})
 
   colors.resets = colors.resets || [{'0':false}]
