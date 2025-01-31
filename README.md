@@ -2,6 +2,16 @@
 
 A through-stream that converts terminal output to HTML.
 
+## this is a fork
+
+of [ansi-html-stream](https://github.com/hughsk/ansi-html-stream) module, made by the wonderful Open Source author [@hughsk](https://github.com/hughsk). all credit goes to him. 
+
+changes:
+
+- mocha version was updated and tests too.
+- the non-functioning module `clone` was replaced with the "native" function `structuredClone`
+
+
 ## Installation
 
 ``` bash
