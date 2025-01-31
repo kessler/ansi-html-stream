@@ -1,5 +1,5 @@
 {
-  "name": "ansi-html-stream",
+  "name": "@kessler/ansi-html-stream",
   "version": "1.0.0",
   "description": "Stream ANSI terminal output to an HTML format.",
   "main": "index.js",
